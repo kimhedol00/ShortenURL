@@ -1,16 +1,18 @@
-# This is a sample Python script.
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+import shorten
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+app = FastAPI()
+
+@app.get("/")
+async def read_index():
+    return FileResponse('public/index.html',media_type='text/html')
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+@app.get("/url/short")
+async def shorten_URL(url):
+    short_url = shorten.shorten_url(url)
+    return {"message": "success","url":short_url}
 
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+app.mount("/", StaticFiles(directory="public"), name="static")
